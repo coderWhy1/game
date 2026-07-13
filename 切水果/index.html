@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>炫酷切水果</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: "PingFang SC", sans-serif;
+      background: radial-gradient(circle at top, #1e293b, #0f172a 60%, #020617);
+      height: 100vh;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .light {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: .45;
+      animation: move 10s infinite alternate;
+    }
+
+    .light1 {
+      width: 400px;
+      height: 400px;
+      background: #22d3ee;
+      top: -100px;
+      left: -100px;
+    }
+
+    .light2 {
+      width: 350px;
+      height: 350px;
+      background: #f472b6;
+      right: -100px;
+      bottom: -100px;
+    }
+
+    @keyframes move {
+      from {
+        transform: translate(0, 0);
+      }
+
+      to {
+        transform: translate(80px, 60px);
+      }
+    }
+
+    .top {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 850px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .08);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, .08);
+      color: #fff;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 34px;
+      background: linear-gradient(135deg, #fb7185, #f97316);
+      box-shadow: 0 10px 25px rgba(249, 115, 22, .35);
+    }
+
+    .title h1 {
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .title p {
+      margin-top: 4px;
+      color: rgba(255, 255, 255, .7);
+    }
+
+    .panel {
+      display: flex;
+      gap: 14px;
+    }
+
+    .card {
+      min-width: 110px;
+      padding: 12px 18px;
+      border-radius: 20px;
+      text-align: center;
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .card-label {
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    .card-value {
+      margin-top: 6px;
+      font-size: 34px;
+      font-weight: bold;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #trailCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, .6);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 420px;
+      max-width: 92vw;
+      padding: 36px;
+      border-radius: 30px;
+      text-align: center;
+      color: #fff;
+      background: rgba(255, 255, 255, .1);
+      backdrop-filter: blur(20px);
+      animation: pop .28s;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(.8);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 70px;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 38px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .modal-desc {
+      line-height: 1.8;
+      color: rgba(255, 255, 255, .82);
+      margin-bottom: 26px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      padding: 16px 42px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, .35);
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .btn:active {
+      transform: scale(.96);
+    }
+
+    #nextBtn {
+      margin: 20px auto;
+      letter-spacing: 5px;
+    }
+
+    @media(max-width:700px) {
+      .top {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .title h1 {
+        font-size: 28px;
+      }
+
+      .card-value {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg">
+    <div class="light light1"></div>
+    <div class="light light2"></div>
+  </div>
+
+  <audio id="bgm" loop preload="auto" src="./bgm.mp3"></audio>
+  <audio id="sliceSound" preload="auto" src="./sliceSound.mp3"></audio>
+  <audio id="bombSound" preload="auto" src="./bomb.mp3"></audio>
+
+  <div class="top">
+    <div class="logo-wrap">
+      <div class="logo">🍉</div>
+      <div class="title">
+        <h1>切水果</h1>
+        <p>疯狂滑动切开水果</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="card">
+        <div class="card-label">关卡</div>
+        <div class="card-value" id="level">1</div>
+      </div>
+      <div class="card">
+        <div class="card-label">得分</div>
+        <div class="card-value" id="score">0</div>
+      </div>
+      <div class="card">
+        <div class="card-label">时间</div>
+        <div class="card-value" id="time">30</div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="game"></canvas>
+  <canvas id="trailCanvas"></canvas>
+
+  <div class="modal show" id="startModal">
+    <div class="modal-box">
+      <div class="modal-icon">🍓</div>
+      <div class="modal-title">炫酷切水果</div>
+      <div class="modal-desc">
+        滑动鼠标或手指切水果<br>30秒内获得更高分数
+      </div>
+      <button class="btn" id="startBtn">开始游戏</button>
+    </div>
+  </div>
+
+  <div class="modal" id="endModal">
+    <div class="modal-box">
+      <div class="modal-icon">🎉</div>
+      <div class="modal-title">游戏结束</div>
+      <div class="modal-desc" id="finalScore"></div>
+      <button class="btn" id="restartBtn">再玩一次</button>
+      <button class="btn" id="nextBtn">下一关</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const trailCanvas = document.getElementById("trailCanvas");
+    const tctx = trailCanvas.getContext("2d");
+    const levelEl = document.getElementById("level");
+    const scoreEl = document.getElementById("score");
+    const timeEl = document.getElementById("time");
+    const startModal = document.getElementById("startModal");
+    const endModal = document.getElementById("endModal");
+    const finalScore = document.getElementById("finalScore");
+    const bgm = document.getElementById("bgm");
+    const sliceSound = document.getElementById("sliceSound");
+
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    canvas.width = w; canvas.height = h;
+    trailCanvas.width = w; trailCanvas.height = h;
+
+    window.addEventListener("resize", () => {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w; canvas.height = h;
+      trailCanvas.width = w; trailCanvas.height = h;
+    });
+
+    const FRUITS = ["🍎", "🍉", "🍓", "🍊", "🥝", "🍍", "🍑"];
+    const BOMB_EMOJI = "💣";
+    // 最大地雷数量
+    let MAX_BOMBS = 0;
+    let fruits = [], particles = [], trailPoints = [];
+    let level = 1, score = 0, time = 30, playing = false, timer = null, spawnTimer = null;
+    let isMoving = false;
+    let trailFadeTimer = null;
+
+    class Fruit {
+      constructor(isBomb = false) {
+        this.x = Math.random() * w;
+        this.y = h + 80;
+        this.radius = 42 + Math.random() * 12;
+        this.vx = (Math.random() - .5) * 6;
+        this.vy = -(14 + Math.random() * 4);
+        this.gravity = .22;
+        this.rotation = 0;
+        this.isBomb = isBomb;
+        this.emoji = isBomb
+          ? BOMB_EMOJI
+          : FRUITS[
+          Math.floor(
+            Math.random() *
+            FRUITS.length
+          )
+          ];
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += this.gravity;
+        this.rotation += .04;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.font = `${this.radius * 1.5}px serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(this.emoji, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x; this.y = y;
+        this.vx = (Math.random() - .5) * 10;
+        this.vy = (Math.random() - .5) * 10;
+        this.life = 1;
+        this.size = 4 + Math.random() * 8;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= .03;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = "#f43f5e";
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function spawnFruit() {
+      if (!playing) return;
+      // 普通水果
+      fruits.push(
+        new Fruit()
+      );
+      // 20%概率生成地雷
+      if (Math.random() < 0.2) {
+        // 当前地雷数量
+        const bombCount =
+          fruits.filter(
+            f => f.isBomb
+          ).length;
+        // 限制最大地雷数量
+        if (bombCount < MAX_BOMBS) {
+          spawnBombs(1);
+        }
+      }
+      const min = 200;
+      const max = 800;
+      const delay =
+        Math.floor(
+          Math.random() *
+          (max - min + 1)
+        ) + min;
+      spawnTimer =
+        setTimeout(
+          spawnFruit,
+          delay
+        );
+    }
+
+    function spawnBombs(count = 1) {
+      if (!playing) return;
+      for (let i = 0; i < count; i++) {
+        fruits.push(
+          new Fruit(true)
+        );
+      }
+    }
+
+    function drawTrail() {
+      tctx.clearRect(0, 0, w, h);
+      if (trailPoints.length < 2) return;
+
+      tctx.lineCap = "round";
+      tctx.lineJoin = "round";
+      tctx.shadowBlur = 30;
+      tctx.shadowColor = "rgba(255,255,255,.9)";
+
+      // 使用贝塞尔曲线绘制平滑轨迹
+      tctx.beginPath();
+      tctx.moveTo(trailPoints[0].x, trailPoints[0].y);
+
+      for (let i = 1; i < trailPoints.length - 1; i++) {
+        const p1 = trailPoints[i];
+        const p2 = trailPoints[i + 1];
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+        tctx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+      }
+
+      // 连接最后一个点
+      const last = trailPoints[trailPoints.length - 1];
+      tctx.lineTo(last.x, last.y);
+
+      // 渐变透明度
+      const alpha = Math.min(1, trailPoints.length / 10);
+      tctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      tctx.lineWidth = 6;
+      tctx.stroke();
+
+      // 内部高光线
+      tctx.beginPath();
+      tctx.moveTo(trailPoints[0].x, trailPoints[0].y);
+      for (let i = 1; i < trailPoints.length - 1; i++) {
+        const p1 = trailPoints[i];
+        const p2 = trailPoints[i + 1];
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+        tctx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+      }
+      tctx.lineTo(last.x, last.y);
+      tctx.strokeStyle = `rgba(255,255,255,${alpha * .6})`;
+      tctx.lineWidth = 2;
+      tctx.stroke();
+
+      // 自动淡出
+      if (!isMoving && trailPoints.length > 0) {
+        trailPoints.shift();
+      }
+    }
+
+    function slice(x, y) {
+      if (!playing) return;
+      fruits.forEach((fruit, index) => {
+        const dx =
+          x - fruit.x;
+
+        const dy =
+          y - fruit.y;
+
+        const distance =
+          Math.sqrt(
+            dx * dx +
+            dy * dy
+          );
+
+        if (distance < fruit.radius) {
+
+          /* ======================
+             切到地雷
+          ====================== */
+          if (fruit.isBomb) {
+
+            playBomb();
+
+            createExplosion(
+              fruit.x,
+              fruit.y
+            );
+
+            fruits.splice(index, 1);
+
+            setTimeout(() => {
+
+              endGame();
+
+            }, 500);
+
+            return;
+          }
+
+          /* ======================
+             正常水果
+          ====================== */
+          score++;
+
+          scoreEl.textContent =
+            score;
+          playSlice();
+          createJuice(
+            fruit.x,
+            fruit.y
+          );
+          fruits.splice(index, 1);
+        }
+      });
+    }
+
+    function createJuice(x, y) {
+      for (let i = 0; i < 16; i++) {
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    /* ======================
+   爆炸特效
+====================== */
+    function createExplosion(x, y) {
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x,
+          y,
+          vx:
+            (Math.random() - .5) * 18,
+          vy:
+            (Math.random() - .5) * 18,
+          life: 1,
+          size:
+            6 + Math.random() * 12,
+          color:
+            Math.random() > .5
+              ? "#f97316"
+              : "#ef4444",
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= .025;
+          },
+          draw() {
+            ctx.save();
+            ctx.globalAlpha =
+              this.life;
+            ctx.beginPath();
+            ctx.arc(
+              this.x,
+              this.y,
+              this.size,
+              0,
+              Math.PI * 2
+            );
+            ctx.fillStyle =
+              this.color;
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+      }
+    }
+
+    function playSlice() {
+      const audio = new Audio("./sliceSound.mp3");
+      audio.volume = .5;
+      audio.play().catch(() => { });
+    }
+
+    /* ======================
+   地雷爆炸音效
+====================== */
+    function playBomb() {
+      const audio =
+        new Audio("./bomb.mp3");
+      audio.volume = .7;
+      audio.play().catch(() => { });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+
+      fruits.forEach((fruit, index) => {
+        fruit.update();
+        fruit.draw();
+        if (fruit.y > h + 150) fruits.splice(index, 1);
+      });
+
+      particles.forEach((p, index) => {
+        p.update();
+        p.draw();
+        if (p.life <= 0) particles.splice(index, 1);
+      });
+
+      drawTrail();
+      requestAnimationFrame(animate);
+    }
+
+    function startGame() {
+      clearInterval(timer);
+      clearTimeout(spawnTimer);
+
+      playing = true;
+      score = 0; time = 30;
+      fruits = []; particles = []; trailPoints = [];
+      scoreEl.textContent = score;
+      timeEl.textContent = time;
+
+      startModal.classList.remove("show");
+      endModal.classList.remove("show");
+
+      bgm.currentTime = 0;
+      bgm.volume = .35;
+      bgm.play().catch(() => { });
+
+      spawnFruit();
+
+      timer = setInterval(() => {
+        time--;
+        timeEl.textContent = time;
+        if (time <= 0) endGame();
+      }, 1000);
+    }
+
+    function endGame(hitBomb = false) {
+      playing = false;
+      clearInterval(timer);
+      clearTimeout(spawnTimer);
+      bgm.pause();
+      if (hitBomb) {
+        finalScore.innerHTML = `
+          <div style="
+            font-size:34px;
+            margin-bottom:12px;
+            color:#ef4444;
+          ">
+            💥 BOOM！
+          </div>
+
+          <div>
+            你切到了地雷
+          </div>
+
+          <div style="
+            font-size:72px;
+            font-weight:900;
+            color:#fde047;
+            margin:12px 0;
+          ">
+            ${score}
+          </div>
+        `;
+        endModal.classList.add("show");
+        return;
+      }
+      const leveler =
+        score >= 40 ? "🔥 水果战神" :
+          score >= 25 ? "⚡ 切水果大师" :
+            score >= 15 ? "🎯 水果达人" :
+              "😊 再接再厉";
+
+      finalScore.innerHTML = `
+    <div style="font-size:24px; margin-bottom:12px;">${leveler}</div>
+    <div>最终得分</div>
+    <div style="font-size:72px; font-weight:900; color:#fde047; margin:12px 0;">${score}</div>
+  `;
+      if (score >= 15) {
+        document.getElementById("nextBtn").style.display = "block";
+      } else {
+        document.getElementById("nextBtn").style.display = "none";
+      }
+      endModal.classList.add("show");
+    }
+
+    function nextLevel() {
+      level++;
+      MAX_BOMBS = level - 1;
+      levelEl.textContent = level;
+      startGame();
+    }
+
+    function handleMove(x, y) {
+      isMoving = true;
+      trailPoints.push({ x, y });
+
+      // 限制轨迹点数量
+      if (trailPoints.length > 20) trailPoints.shift();
+
+      slice(x, y);
+
+      // 清除之前的淡出定时器
+      clearTimeout(trailFadeTimer);
+
+      // 停止移动后开始淡出
+      trailFadeTimer = setTimeout(() => {
+        isMoving = false;
+      }, 80);
+    }
+
+    // 鼠标事件
+    window.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
+    window.addEventListener("mousedown", () => { trailPoints = []; isMoving = true; });
+    window.addEventListener("mouseup", () => { isMoving = false; });
+
+    // 触摸事件
+    window.addEventListener("touchmove", e => {
+      const t = e.touches[0];
+      handleMove(t.clientX, t.clientY);
+    }, { passive: false });
+    window.addEventListener("touchstart", () => { trailPoints = []; isMoving = true; });
+    window.addEventListener("touchend", () => { isMoving = false; });
+
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("restartBtn").addEventListener("click", startGame);
+    document.getElementById("nextBtn").addEventListener("click", nextLevel);
+    animate();
+  </script>
+
+</body>
+
+</html>
+
+</html>

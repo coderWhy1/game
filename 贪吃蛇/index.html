@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>贪吃蛇</title>
+	<link rel="stylesheet" href="./css/main.css">
+	<!-- 分析：
+	1.new一个公共对象。
+	方法1：创建/移除方法。
+	2.蛇是一个对象
+	属性1：当前前进方向.
+	属性2：对象类型，含有当前蛇头，蛇身体，蛇尾位置坐标信息
+	方法1：蛇可以上下左右移动。（运动是靠下一点的坐标点换算，然后通过定位实现的）
+	方法2：蛇可以吃食物。
+	方法3：计算下一点。（定时器运行）
+	3.食物是一个对象
+	4.蛇头:(3,0),方向：right,下一点:(4,0)
+	0         1           2          3               4
+	蛇尾=====蛇身体2=====蛇身体1=====蛇头
+					蛇身体2=====蛇身体1=====new蛇身体1=====new蛇头
+	数据结构：[[3,0],[2,0],[1,0],[0,0]]
+-->
+</head>
+
+<body>
+	<h1>贪吃蛇游戏</h1>
+	<div class="lawn">
+		<!-- 围墙 -->
+		<div class="wall-wrap">
+			<div class="wall-top"></div>
+			<div class="wall-left"></div>
+			<div class="wall-right"></div>
+			<div class="wall-bottom"></div>
+		</div>
+		<!-- 蛇和食物 -->
+		<div class="core">
+			<div class="food-wrap"></div>
+			<div class="snake"></div>
+		</div>
+		<!-- 开始游戏 -->
+		<div class="start-mask">
+			<a href="javascript:;" class="start"></a>
+		</div>
+		<!-- 暂停/继续游戏 -->
+		<div class="control-mask">
+			<a href="javascript:;" class="control"></a>
+		</div>
+	</div>
+	<audio loop="loop" class="audio">
+		<source src="./music/失去才懂.mp3" type="audio/mpeg">
+	</audio>
+	<script src="./js/main.js"></script>
+</body>
+
+</html>
