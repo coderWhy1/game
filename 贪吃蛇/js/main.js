@@ -6,6 +6,7 @@ var start = document.querySelector('.start')
 var controlMask = document.querySelector('.control-mask')
 var control = document.querySelector('.control')
 var audio = document.querySelector('.audio')
+var speed = 160
 function Factory(el, name, place, angle = 0) {
   var div = document.createElement('div')
   div.setAttribute('class', name)
@@ -126,7 +127,7 @@ function Game() {
         this.food.remove()
         this.food.create()
       }
-    }, 120)
+    }, speed)
     this.snake.timer = this.timer
     var that = this
     document.addEventListener("keydown", function (event) {
@@ -157,7 +158,7 @@ function Game() {
         this.food.remove()
         this.food.create()
       }
-    }, 120)
+    }, speed)
   }
   this.reset = function () {
     snakeDom.innerHTML = null

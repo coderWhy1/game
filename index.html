@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 移动端适配核心配置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>趣味小游戏合集</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+      body {
+        background-color: #f0f4f8;
+        padding: 40px 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        color: #222;
+        font-size: 26px;
+        margin-bottom: 40px;
+        font-weight: 600;
+      }
+      .game-item {
+        display: block;
+        text-decoration: none;
+        background-color: #ffffff;
+        padding: 18px 24px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        font-size: 17px;
+        color: #333;
+        transition: all 0.25s ease;
+      }
+      .game-item:active {
+        /* 手机点击按下效果 */
+        transform: scale(0.97);
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+        background-color: #f6f9ff;
+      }
+      .tip-text {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎮 趣味小游戏合集</h1>
+      <a class="game-item" href="./贪吃蛇/index.html">🐍 贪吃蛇</a>
+      <a class="game-item" href="./切水果/index.html">🍉 切水果</a>
+      <a class="game-item" href="./打地鼠小游戏/index.html">🔨 打地鼠小游戏</a>
+      <a class="game-item" href="./烟花/index.html">🎆 烟花效果</a>
+      <div class="tip-text">点击对应项目开始游玩</div>
+    </div>
+  </body>
+</html>
