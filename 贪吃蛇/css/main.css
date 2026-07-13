@@ -217,3 +217,43 @@ h1 {
     margin: 1px 4px;
   }
 }
+
+@media screen and (orientation: landscape) {
+  html, body {
+    flex-direction: row;
+  }
+
+  .game-container {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .direction-pad {
+    width: 190px;
+    height: 100%;
+    padding: 6px 2px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .direction-pad .pad-row {
+    width: 100%;
+  }
+
+  .direction-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+    margin: 2px 3px;
+  }
+
+  .direction-btn-placeholder {
+    width: 52px;
+    height: 52px;
+    margin: 2px 3px;
+  }
+}

@@ -18,11 +18,20 @@ var maxRows = 40
 
 function resizeGame() {
   var titleHeight = 0
-  var controlHeight = 180
+  var controlHeightV = 180
+  var controlWidthH = 190
   var screenWidth = window.innerWidth
   var screenHeight = window.innerHeight
-  var availableWidth = screenWidth
-  var availableHeight = screenHeight - titleHeight - controlHeight
+  var isLandscape = screenWidth > screenHeight
+
+  var availableWidth, availableHeight
+  if (isLandscape) {
+    availableWidth = screenWidth - controlWidthH
+    availableHeight = screenHeight - titleHeight
+  } else {
+    availableWidth = screenWidth
+    availableHeight = screenHeight - titleHeight - controlHeightV
+  }
 
   var wallThickness = 22
   var wallOverlap = 10
@@ -41,9 +50,14 @@ function resizeGame() {
   var lawnWidth = maxCols * cellSize
   var lawnHeight = maxRows * cellSize
 
+  var totalWidth = lawnWidth + wallExtraX
+  var totalHeight = lawnHeight + wallExtraY
+  var fillScale = Math.min(availableWidth / totalWidth, availableHeight / totalHeight)
+  fillScale = Math.min(Math.max(fillScale, 1), 1.1)
+
   lawn.style.width = lawnWidth + 'px'
   lawn.style.height = lawnHeight + 'px'
-  lawn.style.transform = 'none'
+  lawn.style.transform = 'scale(' + fillScale + ')'
 
   var topBottomWidth = lawnWidth + wallOverlap * 2
   var leftRightWidth = lawnHeight + wallOverlap * 2
